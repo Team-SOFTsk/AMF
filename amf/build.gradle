@@ -1,0 +1,70 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 25
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    compile deps.timber
+
+    compile deps.support_appcompat
+    compile deps.support_fragment
+
+    // gson
+    compile deps.gson
+
+    // retrofit
+    compile deps.retrofit
+    compile deps.retrofit_log_interceptor
+
+    // butterknife
+    compile deps.butterknife
+    apt deps.butterknife_compiler
+
+    // mosby
+    compile deps.mvp
+
+    // dagger
+    compile project(":auto-common")
+    apt(deps.dagger_compiler) {
+        exclude group: 'com.google.auto', module: 'auto-common'
+    }
+    apt(deps.dagger_android_processor) {
+        exclude group: 'com.google.auto', module: 'auto-common'
+    }
+    compile(deps.dagger) {
+        exclude group: 'com.google.auto', module: 'auto-common'
+    }
+    compile(deps.dagger_android) {
+        exclude group: 'com.google.auto', module: 'auto-common'
+    }
+    provided deps.javax
+
+    // rx
+    compile deps.rxandroid
+    compile deps.rxjava
+
+    //ormlite
+    compile deps.ormlite
+}
+
+//make sure these environment variables are set in OS
+//it is important for retrolambda to setup environment variables
+retrolambda {
+    jdk System.getenv("JAVA8_HOME")
+    oldJdk System.getenv("JAVA7_HOME")
+    javaVersion JavaVersion.VERSION_1_7
+}
