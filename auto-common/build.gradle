@@ -9,16 +9,7 @@ for (File file : sdkHandler.sdkLoader.repositories) {
 }
 
 dependencies {
-    compile project(':amf-annotations')
-    compile project(':auto-common')
-    compile deps.javapoet
-    compileOnly(deps.autoservice) {
-        exclude group: 'com.google.auto', module: 'auto-common'
-    }
-
-    compile(deps.dagger) {
-        exclude group: 'com.google.auto', module: 'auto-common'
-    }
+    compile 'com.google.guava:guava:19.0'
 }
 
 sourceCompatibility = "1.8"

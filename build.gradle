@@ -5,6 +5,7 @@ ext.deps = [
         support_recycler                : "com.android.support:recyclerview-v7:$supportLibraryVersion",
         support_design                  : "com.android.support:design:$supportLibraryVersion",
         support_annotations             : "com.android.support:support-annotations:$supportLibraryVersion",
+        support_fragment                : "com.android.support:support-fragment:$supportLibraryVersion",
         gson                            : 'com.google.code.gson:gson:2.8.0',
         butterknife                     : 'com.jakewharton:butterknife:8.5.1',
         butterknife_compiler            : 'com.jakewharton:butterknife-compiler:8.5.1',
@@ -23,7 +24,7 @@ ext.deps = [
         timber                          : 'com.jakewharton.timber:timber:4.5.1',
         //compiler
         autoservice                     : 'com.google.auto.service:auto-service:1.0-rc2',
-        autocommon                      : 'com.google.auto:auto-common:0.6',
+        autocommon                      : 'com.google.auto:auto-common:0.8',
         javapoet                        : 'com.squareup:javapoet:1.8.0',
         //test
         junit                           : 'junit:junit:4.12',

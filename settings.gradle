@@ -1,1 +1,1 @@
-include ':sample', ':amf-compiler', ':amf-annotations'
+include ':sample', ':amf-compiler', ':amf-annotations', ':auto-common'
