@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
@@ -18,7 +17,10 @@ android {
 }
 
 dependencies {
+    compile project(":amf-annotations")
+
     compile deps.timber
+    compile deps.rxlog
 
     compile deps.support_appcompat
     compile deps.support_fragment
@@ -32,19 +34,12 @@ dependencies {
 
     // butterknife
     compile deps.butterknife
-    apt deps.butterknife_compiler
 
     // mosby
     compile deps.mvp
 
     // dagger
     compile project(":auto-common")
-    apt(deps.dagger_compiler) {
-        exclude group: 'com.google.auto', module: 'auto-common'
-    }
-    apt(deps.dagger_android_processor) {
-        exclude group: 'com.google.auto', module: 'auto-common'
-    }
     compile(deps.dagger) {
         exclude group: 'com.google.auto', module: 'auto-common'
     }

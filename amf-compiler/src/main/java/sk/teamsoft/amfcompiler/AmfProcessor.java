@@ -1,7 +1,5 @@
 package sk.teamsoft.amfcompiler;
 
-import android.support.annotation.LayoutRes;
-
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
@@ -42,7 +40,6 @@ import sk.teamsoft.amfannotations.Layout;
 
 import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.FINAL;
-import static javax.lang.model.element.Modifier.PRIVATE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.element.Modifier.STATIC;
 
@@ -96,45 +93,28 @@ public class AmfProcessor extends AbstractProcessor {
         generatedLayout = true;
 
         try {
-            Map<String, Integer> layoutMap = new HashMap<>();
+            final CodeBlock.Builder codeBlock = CodeBlock.builder()
+                    .add("MAP = new java.util.HashMap<String,Integer>();");
 
             env.getElementsAnnotatedWith(Layout.class).forEach(element -> {
-                Layout annotation = element.getAnnotation(Layout.class);
+                final Layout annotation = element.getAnnotation(Layout.class);
                 final String name = element.getEnclosingElement().toString() + "." + element.getSimpleName();
                 //TODO validate value first?
-                layoutMap.put(name, annotation.value());
+                codeBlock.add("MAP.put($S, $L);", name, annotation.value());
             });
 
-            TypeSpec.Builder result = TypeSpec.classBuilder("Layout_Processed")
-                    .addModifiers(PUBLIC);
-            CodeBlock.Builder codeBlock = CodeBlock.builder()
-                    .add("map = new HashMap<String,Integer>();");
-            MethodSpec.Builder methodBuilder = MethodSpec.methodBuilder("getLayout")
-                    .returns(Integer.class)
-                    .addAnnotation(LayoutRes.class)
-                    .addParameter(TypeName.get(String.class), "key")
-                    .addModifiers(PUBLIC, STATIC)
-                    .addCode(CodeBlock.builder()
-                            .add("if (!map.containsKey(key)) { throw new IllegalStateException(\"Missing layout definition\"); } else { return (Integer) map.get(key); }")
-                            .build());
-
-            layoutMap.keySet().forEach(s -> codeBlock.add("map.put($S, $L);", s, layoutMap.get(s)));
-
-            result.addModifiers(FINAL);
-            result.addField(TypeName.get(layoutMap.getClass()), "map", STATIC, PRIVATE);
+            final TypeSpec.Builder result = TypeSpec.classBuilder("Layout_Processed");
+            result.addModifiers(PUBLIC, FINAL);
+            result.addField(ParameterizedTypeName.get(Map.class, String.class, Integer.class),
+                    "MAP", STATIC, PUBLIC, FINAL);
             result.addStaticBlock(codeBlock.build());
-            result.addMethod(methodBuilder.build());
 
-            JavaFile javaFile = JavaFile.builder("sk.teamsoft.amf", result.build())
+            final JavaFile javaFile = JavaFile.builder("sk.teamsoft.amf", result.build())
                     .addFileComment("Generated AMF code. Do not modify!")
                     .build();
 
-            try {
-                System.out.println("write file Layout_Processed");
-                javaFile.writeTo(filer);
-            } catch (IOException e) {
-                System.out.println("Unable to write file: " + e.getMessage());
-            }
+            System.out.println("write file Layout_Processed");
+            javaFile.writeTo(filer);
         } catch (Exception e) {
             System.out.println("Cannot process layouts :" + e.getMessage());
         }
@@ -150,7 +130,7 @@ public class AmfProcessor extends AbstractProcessor {
         generatedSubcomponents = true;
 
         //map of (key) Element and (value) Subcomponent types
-        Map<TypeMirror, TypeName> mirrorMap = new HashMap<>();
+        final Map<TypeMirror, TypeName> mirrorMap = new HashMap<>();
 
         for (Element element : env.getElementsAnnotatedWith(AutoSubcomponent.class)) {
             System.out.println("processing subcomponents for " + element);

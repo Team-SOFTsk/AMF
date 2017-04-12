@@ -12,10 +12,7 @@ dependencies {
     compile project(':amf-annotations')
     compile project(':auto-common')
     compile deps.javapoet
-    compileOnly(deps.autoservice) {
-        exclude group: 'com.google.auto', module: 'auto-common'
-    }
-
+    compileOnly deps.autoservice
     compile(deps.dagger) {
         exclude group: 'com.google.auto', module: 'auto-common'
     }
